@@ -139,6 +139,10 @@ public abstract class CommonSourceCodeGenerator
 
    protected void addClassToList(Class c)
    {
+      if (c == Object.class)
+      {
+         return;
+      }
       if (c.isInterface())
       {
          return;
