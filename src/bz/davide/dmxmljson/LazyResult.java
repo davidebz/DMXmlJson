@@ -17,15 +17,21 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>
 */
 
-package bz.davide.dmxmljson.unmarshalling.xml;
+package bz.davide.dmxmljson;
 
-import org.w3c.dom.Node;
+import java.util.ArrayList;
 
-/**
- * @author Davide Montesin <d@vide.bz>
- */
-public class ElementAndSubtype
+public class LazyResult
 {
-   public Node   element;
-   public String subtype = null;
+
+   public LazyResult()
+   {
+   }
+
+   protected LazyResult(Void void1)
+   {
+   }
+
+   public ArrayList<Object> result = new ArrayList();
+   public ArrayList<Object> others = new ArrayList();
 }

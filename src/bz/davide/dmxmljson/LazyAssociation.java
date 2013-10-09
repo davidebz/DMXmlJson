@@ -17,15 +17,16 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>
 */
 
-package bz.davide.dmxmljson.unmarshalling.xml;
+package bz.davide.dmxmljson;
 
-import org.w3c.dom.Node;
-
-/**
- * @author Davide Montesin <d@vide.bz>
- */
-public class ElementAndSubtype
+public class LazyAssociation<T>
 {
-   public Node   element;
-   public String subtype = null;
+   String      id;
+   transient T reference;
+
+   public LazyAssociation(T reference)
+   {
+      this.reference = reference;
+      this.id = String.valueOf(System.currentTimeMillis());
+   }
 }

@@ -33,6 +33,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 
 import bz.davide.dmxmljson.unmarshalling.Structure;
@@ -45,6 +46,7 @@ public class W3CXMLStructure implements Structure
 {
    ElementAndSubtype                             element;
    HashMap<String, ArrayList<ElementAndSubtype>> elementsByName = new HashMap<String, ArrayList<ElementAndSubtype>>();
+   ArrayList<ElementAndSubtype>                  childNodes     = new ArrayList<ElementAndSubtype>();
 
    W3CXMLStructure(ElementAndSubtype element)
    {
@@ -68,8 +70,9 @@ public class W3CXMLStructure implements Structure
       Document doc = docBuilder.parse(inputStream);
 
       ElementAndSubtype elementAndSubtype = new ElementAndSubtype();
-      elementAndSubtype.element = doc.getDocumentElement();
-      String[] parts = extractNameAndSubtype(elementAndSubtype.element.getTagName());
+      Element documentElement = doc.getDocumentElement();
+      elementAndSubtype.element = documentElement;
+      String[] parts = extractNameAndSubtype(documentElement.getTagName());
       elementAndSubtype.subtype = parts[1];
 
       return elementAndSubtype;
@@ -116,6 +119,22 @@ public class W3CXMLStructure implements Structure
                this.elementsByName.put(attrName, elements);
             }
             elements.add(elementAndSubtype);
+
+            ElementAndSubtype childElementAndSubtype = new ElementAndSubtype();
+            childElementAndSubtype.element = element;
+            childElementAndSubtype.subtype = tagName;
+            this.childNodes.add(childElementAndSubtype);
+         }
+         if (node instanceof Text)
+         {
+            String txt = node.getTextContent();
+            if (txt.trim().length() > 0)
+            {
+               ElementAndSubtype childElementAndSubtype = new ElementAndSubtype();
+               childElementAndSubtype.element = node;
+               childElementAndSubtype.subtype = "TextNode";
+               this.childNodes.add(childElementAndSubtype);
+            }
          }
       }
    }
@@ -128,10 +147,13 @@ public class W3CXMLStructure implements Structure
    @Override
    public String getId() throws SQLException
    {
-      String attr = this.element.element.getAttribute("id");
-      if (attr != null && attr.length() > 0)
+      if (this.element.element instanceof Element)
       {
-         return attr;
+         String attr = ((Element) this.element.element).getAttribute("id");
+         if (attr != null && attr.length() > 0)
+         {
+            return attr;
+         }
       }
       return null;
    }
@@ -151,10 +173,13 @@ public class W3CXMLStructure implements Structure
    @Override
    public String getRefId() throws SQLException
    {
-      String attr = this.element.element.getAttribute("refid");
-      if (attr != null && attr.length() > 0)
+      if (this.element.element instanceof Element)
       {
-         return attr;
+         String attr = ((Element) this.element.element).getAttribute("refid");
+         if (attr != null && attr.length() > 0)
+         {
+            return attr;
+         }
       }
       return null;
    }
@@ -162,13 +187,21 @@ public class W3CXMLStructure implements Structure
    @Override
    public Value property(String name)
    {
+      if (this.element.element instanceof Text && name.equals("value"))
+      {
+         return new W3CXMLValue(this.element.element.getTextContent());
+      }
       ArrayList<ElementAndSubtype> es = this.elementsByName.get(name);
       if (es == null || es.size() == 0)
       {
          // attribute with this name?
-         if (this.element.element.hasAttribute(name))
+         if (((Element) this.element.element).hasAttribute(name))
          {
-            return new W3CXMLValue(this.element.element.getAttribute(name));
+            return new W3CXMLValue(((Element) this.element.element).getAttribute(name));
+         }
+         if (name.equals("childNodes")) // special case, when xml is used as list of childNodes and not as a map like in xhtml
+         {
+            return new W3CXMLValue(this.childNodes);
          }
          return null;
       }
