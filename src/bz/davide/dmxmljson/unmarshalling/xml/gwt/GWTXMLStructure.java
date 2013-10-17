@@ -17,57 +17,46 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>
 */
 
-package bz.davide.dmxmljson.unmarshalling.xml;
+package bz.davide.dmxmljson.unmarshalling.xml.gwt;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
-import org.xml.sax.SAXException;
 
 import bz.davide.dmxmljson.unmarshalling.Structure;
 import bz.davide.dmxmljson.unmarshalling.Value;
 
+import com.google.gwt.xml.client.Document;
+import com.google.gwt.xml.client.Element;
+import com.google.gwt.xml.client.Node;
+import com.google.gwt.xml.client.NodeList;
+import com.google.gwt.xml.client.Text;
+import com.google.gwt.xml.client.XMLParser;
+
 /**
  * @author Davide Montesin <d@vide.bz>
  */
-public class W3CXMLStructure implements Structure
+public class GWTXMLStructure implements Structure
 {
    ElementAndSubtype                             element;
    HashMap<String, ArrayList<ElementAndSubtype>> elementsByName = new HashMap<String, ArrayList<ElementAndSubtype>>();
    ArrayList<ElementAndSubtype>                  childNodes     = new ArrayList<ElementAndSubtype>();
 
-   W3CXMLStructure(ElementAndSubtype element)
+   GWTXMLStructure(ElementAndSubtype element)
    {
       super();
       this.element = element;
       this.extractChildElementByName();
    }
 
-   public W3CXMLStructure(InputStream inputStream) throws ParserConfigurationException, SAXException,
-            IOException
+   public GWTXMLStructure(String xmlText)
    {
-      this(domParser(inputStream));
+      this(domParser(xmlText));
    }
 
-   static ElementAndSubtype domParser(InputStream inputStream) throws ParserConfigurationException,
-                                                              SAXException,
-                                                              IOException
+   static ElementAndSubtype domParser(String xmlText)
    {
-      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-      DocumentBuilder docBuilder = factory.newDocumentBuilder();
-      Document doc = docBuilder.parse(inputStream);
+
+      Document doc = XMLParser.parse(xmlText);
 
       ElementAndSubtype elementAndSubtype = new ElementAndSubtype();
       Element documentElement = doc.getDocumentElement();
@@ -105,7 +94,7 @@ public class W3CXMLStructure implements Structure
             Element element = (Element) node;
 
             String tagName = element.getTagName();
-            String[] parts = W3CXMLStructure.extractNameAndSubtype(tagName);
+            String[] parts = GWTXMLStructure.extractNameAndSubtype(tagName);
 
             String attrName = parts[0];
             ElementAndSubtype elementAndSubtype = new ElementAndSubtype();
@@ -148,7 +137,7 @@ public class W3CXMLStructure implements Structure
    }
 
    @Override
-   public String getId() throws SQLException
+   public String getId() throws Exception
    {
       if (this.element.element instanceof Element)
       {
@@ -174,7 +163,7 @@ public class W3CXMLStructure implements Structure
    }
 
    @Override
-   public String getRefId() throws SQLException
+   public String getRefId() throws Exception
    {
       if (this.element.element instanceof Element)
       {
@@ -192,7 +181,7 @@ public class W3CXMLStructure implements Structure
    {
       if (this.element.element instanceof Text && name.equals("value"))
       {
-         return new W3CXMLValue(this.element.element.getTextContent());
+         return new GWTXMLValue(this.element.element.getNodeValue());
       }
       ArrayList<ElementAndSubtype> es = this.elementsByName.get(name);
       if (es == null || es.size() == 0)
@@ -200,15 +189,15 @@ public class W3CXMLStructure implements Structure
          // attribute with this name?
          if (((Element) this.element.element).hasAttribute(name))
          {
-            return new W3CXMLValue(((Element) this.element.element).getAttribute(name));
+            return new GWTXMLValue(((Element) this.element.element).getAttribute(name));
          }
          if (name.equals("childNodes")) // special case, when xml is used as list of childNodes and not as a map like in xhtml
          {
-            return new W3CXMLValue(this.childNodes);
+            return new GWTXMLValue(this.childNodes);
          }
          return null;
       }
-      return new W3CXMLValue(es);
+      return new GWTXMLValue(es);
    }
 
    @Override

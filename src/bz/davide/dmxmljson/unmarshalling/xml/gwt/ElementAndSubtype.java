@@ -17,19 +17,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>
 */
 
-package bz.davide.dmxmljson;
+package bz.davide.dmxmljson.unmarshalling.xml.gwt;
+
+import com.google.gwt.xml.client.Node;
 
 /**
  * @author Davide Montesin <d@vide.bz>
  */
-public class LazyAssociation<T>
+public class ElementAndSubtype
 {
-   String      id;
-   transient T reference;
-
-   public LazyAssociation(T reference)
-   {
-      this.reference = reference;
-      this.id = String.valueOf(System.currentTimeMillis());
-   }
+   public Node   element;
+   public String subtype = null;
 }

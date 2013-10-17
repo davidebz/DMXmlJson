@@ -17,19 +17,53 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>
 */
 
-package bz.davide.dmxmljson;
+package bz.davide.dmxmljson.unmarshalling.dom.gwt;
+
+import java.util.ArrayList;
+
+import bz.davide.dmxmljson.unmarshalling.Array;
+import bz.davide.dmxmljson.unmarshalling.Value;
 
 /**
  * @author Davide Montesin <d@vide.bz>
  */
-public class LazyAssociation<T>
+public class GWTDOMArray implements Array
 {
-   String      id;
-   transient T reference;
+   ArrayList<ElementAndSubtype> elements;
 
-   public LazyAssociation(T reference)
+   int                          pos = 0;
+
+   public GWTDOMArray(ArrayList<ElementAndSubtype> element)
    {
-      this.reference = reference;
-      this.id = String.valueOf(System.currentTimeMillis());
+      super();
+      this.elements = element;
+
    }
+
+   @Override
+   public void open()
+   {
+
+   }
+
+   @Override
+   public Value nextItem()
+   {
+      if (this.pos >= this.elements.size())
+      {
+         return null;
+      }
+      ArrayList<ElementAndSubtype> c = new ArrayList<ElementAndSubtype>();
+      c.add(this.elements.get(this.pos));
+      Value ret = new GWTDOMValue(c);
+      this.pos++;
+      return ret;
+   }
+
+   @Override
+   public void close()
+   {
+
+   }
+
 }

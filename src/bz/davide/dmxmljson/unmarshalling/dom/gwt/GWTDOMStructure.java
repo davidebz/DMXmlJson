@@ -17,62 +17,45 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>
 */
 
-package bz.davide.dmxmljson.unmarshalling.xml;
+package bz.davide.dmxmljson.unmarshalling.dom.gwt;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
-import org.xml.sax.SAXException;
 
 import bz.davide.dmxmljson.unmarshalling.Structure;
 import bz.davide.dmxmljson.unmarshalling.Value;
 
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Node;
+import com.google.gwt.dom.client.NodeList;
+
 /**
  * @author Davide Montesin <d@vide.bz>
  */
-public class W3CXMLStructure implements Structure
+public class GWTDOMStructure implements Structure
 {
    ElementAndSubtype                             element;
    HashMap<String, ArrayList<ElementAndSubtype>> elementsByName = new HashMap<String, ArrayList<ElementAndSubtype>>();
    ArrayList<ElementAndSubtype>                  childNodes     = new ArrayList<ElementAndSubtype>();
 
-   W3CXMLStructure(ElementAndSubtype element)
+   GWTDOMStructure(ElementAndSubtype element)
    {
       super();
       this.element = element;
       this.extractChildElementByName();
    }
 
-   public W3CXMLStructure(InputStream inputStream) throws ParserConfigurationException, SAXException,
-            IOException
+   public GWTDOMStructure(Element xhtml)
    {
-      this(domParser(inputStream));
+      this(domParser(xhtml));
    }
 
-   static ElementAndSubtype domParser(InputStream inputStream) throws ParserConfigurationException,
-                                                              SAXException,
-                                                              IOException
+   static ElementAndSubtype domParser(Element xhtml)
    {
-      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-      DocumentBuilder docBuilder = factory.newDocumentBuilder();
-      Document doc = docBuilder.parse(inputStream);
 
       ElementAndSubtype elementAndSubtype = new ElementAndSubtype();
-      Element documentElement = doc.getDocumentElement();
-      elementAndSubtype.element = documentElement;
-      String[] parts = extractNameAndSubtype(documentElement.getTagName());
+      elementAndSubtype.element = xhtml;
+      String[] parts = extractNameAndSubtype(xhtml.getTagName().toLowerCase());
       elementAndSubtype.subtype = parts[1];
 
       return elementAndSubtype;
@@ -99,13 +82,13 @@ public class W3CXMLStructure implements Structure
       NodeList nl = this.element.element.getChildNodes();
       for (int i = 0; i < nl.getLength(); i++)
       {
-         Node node = nl.item(i);
-         if (node instanceof Element)
+         Node node = nl.getItem(i);
+         if (node.getNodeType() == Node.ELEMENT_NODE)
          {
             Element element = (Element) node;
 
-            String tagName = element.getTagName();
-            String[] parts = W3CXMLStructure.extractNameAndSubtype(tagName);
+            String tagName = element.getTagName().toLowerCase();
+            String[] parts = extractNameAndSubtype(tagName);
 
             String attrName = parts[0];
             ElementAndSubtype elementAndSubtype = new ElementAndSubtype();
@@ -128,7 +111,7 @@ public class W3CXMLStructure implements Structure
                                              childElementAndSubtype.subtype.substring(1);
             this.childNodes.add(childElementAndSubtype);
          }
-         if (node instanceof Text)
+         if (node.getNodeType() == Node.TEXT_NODE)
          {
             String txt = node.getNodeValue();
             if (txt.trim().length() > 0)
@@ -148,9 +131,9 @@ public class W3CXMLStructure implements Structure
    }
 
    @Override
-   public String getId() throws SQLException
+   public String getId() throws Exception
    {
-      if (this.element.element instanceof Element)
+      if (this.element.element.getNodeType() == Node.ELEMENT_NODE)
       {
          String attr = ((Element) this.element.element).getAttribute("id");
          if (attr != null && attr.length() > 0)
@@ -174,9 +157,9 @@ public class W3CXMLStructure implements Structure
    }
 
    @Override
-   public String getRefId() throws SQLException
+   public String getRefId() throws Exception
    {
-      if (this.element.element instanceof Element)
+      if (this.element.element.getNodeType() == Node.ELEMENT_NODE)
       {
          String attr = ((Element) this.element.element).getAttribute("refid");
          if (attr != null && attr.length() > 0)
@@ -190,9 +173,9 @@ public class W3CXMLStructure implements Structure
    @Override
    public Value property(String name)
    {
-      if (this.element.element instanceof Text && name.equals("value"))
+      if (this.element.element.getNodeType() == Node.TEXT_NODE && name.equals("value"))
       {
-         return new W3CXMLValue(this.element.element.getTextContent());
+         return new GWTDOMValue(this.element.element.getNodeValue());
       }
       ArrayList<ElementAndSubtype> es = this.elementsByName.get(name);
       if (es == null || es.size() == 0)
@@ -200,15 +183,15 @@ public class W3CXMLStructure implements Structure
          // attribute with this name?
          if (((Element) this.element.element).hasAttribute(name))
          {
-            return new W3CXMLValue(((Element) this.element.element).getAttribute(name));
+            return new GWTDOMValue(((Element) this.element.element).getAttribute(name));
          }
          if (name.equals("childNodes")) // special case, when xml is used as list of childNodes and not as a map like in xhtml
          {
-            return new W3CXMLValue(this.childNodes);
+            return new GWTDOMValue(this.childNodes);
          }
          return null;
       }
-      return new W3CXMLValue(es);
+      return new GWTDOMValue(es);
    }
 
    @Override

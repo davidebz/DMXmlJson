@@ -21,6 +21,9 @@ package bz.davide.dmxmljson;
 
 import java.util.ArrayList;
 
+/**
+ * @author Davide Montesin <d@vide.bz>
+ */
 public class LazyResult
 {
 
