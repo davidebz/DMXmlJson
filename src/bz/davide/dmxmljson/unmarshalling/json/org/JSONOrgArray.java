@@ -15,26 +15,56 @@ GNU Lesser General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>
-*/
-
-package bz.davide.dmxmljson.marshalling.json;
-
-/**
- * @author Davide Montesin <d@vide.bz>
  */
-public class JSONModelBoolean extends JSONModelValue
-{
-   boolean value;
 
-   public JSONModelBoolean(boolean value)
+package bz.davide.dmxmljson.unmarshalling.json.org;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import bz.davide.dmxmljson.unmarshalling.Array;
+import bz.davide.dmxmljson.unmarshalling.Value;
+
+public class JSONOrgArray implements Array
+{
+   JSONArray jsonArray;
+   int pos = 0;
+
+   public JSONOrgArray(JSONArray jsonArray)
    {
-      super();
-      this.value = value;
+      this.jsonArray = jsonArray;
    }
 
    @Override
-   public void toJSON(StringBuffer buffer, int indent, int INDENTNR)
+   public void close()
    {
-      buffer.append(String.valueOf(this.value));
    }
+
+   @Override
+   public Value nextItem()
+   {
+      Object val;
+      try
+      {
+         if (pos >= jsonArray.length())
+         {
+            return null;
+         }
+         val = jsonArray.get(pos);
+         pos++;
+         return new JSONOrgValue(val);
+      }
+      catch (JSONException e)
+      {
+         e.printStackTrace();
+         return null;
+      }
+
+   }
+
+   @Override
+   public void open()
+   {
+   }
+
 }

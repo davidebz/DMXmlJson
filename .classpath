@@ -3,5 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="libs/gwt-user.jar"/>
+	<classpathentry kind="lib" path="libs/org-json-parser-2013-12-13.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

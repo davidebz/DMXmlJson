@@ -33,7 +33,7 @@ public class JSONModelInteger extends JSONModelValue
    }
 
    @Override
-   public void toJSON(StringBuffer buffer, int indent)
+   public void toJSON(StringBuffer buffer, int indent, int INDENTNR)
    {
       buffer.append(String.valueOf(this.value));
    }

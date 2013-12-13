@@ -72,16 +72,20 @@ public class JSONStructure implements Structure
       this.jsonObject.putAttribute("__id", new JSONModelString(id));
    }
 
-   public void toJSON(StringBuffer buffer)
+   public void toJSON(StringBuffer buffer, int indent)
    {
-      this.jsonObject.toJSON(buffer, 0);
+      this.jsonObject.toJSON(buffer, 0, indent);
+   }
+   public String toJSON(int indent)
+   {
+      StringBuffer sb = new StringBuffer();
+      this.toJSON(sb, indent);
+      return sb.toString();
    }
 
    @Override
    public String toString()
    {
-      StringBuffer sb = new StringBuffer();
-      this.toJSON(sb);
-      return sb.toString();
+      return toJSON(3);
    }
 }

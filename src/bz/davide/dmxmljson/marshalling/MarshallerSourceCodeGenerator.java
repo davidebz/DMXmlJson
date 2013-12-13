@@ -131,6 +131,10 @@ public class MarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
             {
                out.println("                  else   array.item().decimal((Double)o); ");
             }
+            else if (componentType == Integer.class || componentType == Integer.TYPE)
+            {
+               out.println("                  else   array.item().integer((Integer)o); ");
+            }
             else
             {
                this.addClassToList(componentType);

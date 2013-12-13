@@ -32,45 +32,53 @@ public class JSONModelObject extends JSONModelValue
    HashMap<String, JSONModelValue> attributes     = new HashMap<String, JSONModelValue>();
 
    @Override
-   public void toJSON(StringBuffer buffer, int indent)
+   public void toJSON(StringBuffer buffer, int indent, int INDENTNR)
    {
 
-      buffer.append(SPACES.substring(0, indent * INDENTNR));
+      buffer.append(SPACES(indent * INDENTNR));
 
       buffer.append("{");
       for (int i = 0; i < this.attributeNames.size(); i++)
       {
          String attrName = this.attributeNames.get(i);
-         buffer.append("\n");
-         buffer.append(SPACES.substring(0, (indent + 1) * INDENTNR));
+         if (INDENTNR > 0)
+            buffer.append("\n");
+         buffer.append(SPACES((indent + 1) * INDENTNR));
          buffer.append(attrName);
          buffer.append(": ");
          JSONModelValue value = this.attributes.get(attrName);
          if (value instanceof JSONModelObject)
          {
             JSONModelObject jsonObject = (JSONModelObject) value;
-            if (jsonObject.attributeNames.size() > 0)
+            if (jsonObject.attributeNames.size() > 0 && INDENTNR > 0)
             {
                buffer.append("\n");
             }
          }
-         value.toJSON(buffer, indent + 2);
+         value.toJSON(buffer, indent + 2, INDENTNR);
          if (i < this.attributeNames.size() - 1)
          {
             buffer.append(",");
          }
       }
-      if (this.attributeNames.size() > 0)
+      if (this.attributeNames.size() > 0 && INDENTNR > 0)
       {
          buffer.append("\n");
-         buffer.append(SPACES.substring(0, indent * INDENTNR));
+         buffer.append(SPACES(indent * INDENTNR));
       }
       buffer.append("}");
 
    }
 
-   final static int    INDENTNR = 0;
-   final static String SPACES   = "                                                                                                                                ";
+   //final static int    INDENTNR = 0;
+   final static String SPACES_   = "                                                                                                                                ";
+   static String SPACES(int n)
+   {
+      String ret = SPACES_;
+      while (ret.length() < n)
+         ret += SPACES_;
+      return ret.substring(0, n);
+   }
 
    void putAttribute(String name, JSONModelValue jsonValue)
    {

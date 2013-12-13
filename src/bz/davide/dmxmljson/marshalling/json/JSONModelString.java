@@ -33,7 +33,7 @@ public class JSONModelString extends JSONModelValue
    }
 
    @Override
-   public void toJSON(StringBuffer buffer, int indent)
+   public void toJSON(StringBuffer buffer, int indent, int INDENTNR)
    {
       buffer.append("\"");
       String escapedString = escapeString(this.value);

@@ -62,7 +62,7 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
       {
          if (this.type == Access.FIELD) // When using field access a special constructor is used, to avoid "regular" code to run!
          {
-            out.println("            return new " + clazz.getName() + "((Void)null);");
+            out.println("            return new " + clazz.getName() + "();");
          }
          else
          {
@@ -180,6 +180,10 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
             {
                out.println("                        arrayList.add(value.decimal());");
             }
+            else if (componentType == Integer.class || componentType == Integer.TYPE)
+            {
+               out.println("                        arrayList.add(value.integer());");
+            }
             else
             {
                this.addClassToList(componentType);
@@ -189,10 +193,12 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
                out.println("                        if (refid != null)                              ");
                out.println("                           arrayList.add(identities.get(refid));                                                ");
                out.println("                        else {");
-               out.println("                           Object o = newInstance(value.structure().getRuntimeClassName(\"" +
+               out.println("                           bz.davide.dmxmljson.unmarshalling.Structure tmpStructure = value.structure();");
+               
+               out.println("                           Object o = newInstance(tmpStructure.getRuntimeClassName(\"" +
                            componentType.getSimpleName() +
                            "\"));              ");
-               out.println("                           internalUnmarschall(value.structure(), o.getClass().getName(), o, identities); ");
+               out.println("                           internalUnmarschall(tmpStructure, o.getClass().getName(), o, identities); ");
                out.println("                           arrayList.add(o);                                                ");
                out.println("                        }");
                out.println("                     }                                                                   ");

@@ -21,5 +21,5 @@ package bz.davide.dmxmljson.marshalling.json;
 
 public abstract class JSONModelValue
 {
-   public abstract void toJSON(StringBuffer buffer, int indent);
+   public abstract void toJSON(StringBuffer buffer, int indent, int INDENTNR);
 }

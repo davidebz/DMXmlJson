@@ -29,23 +29,24 @@ public class JSONModelArray extends JSONModelValue
    ArrayList<JSONModelValue> items = new ArrayList<JSONModelValue>();
 
    @Override
-   public void toJSON(StringBuffer buffer, int indent)
+   public void toJSON(StringBuffer buffer, int indent, int INDENTNR)
    {
       buffer.append("[");
       for (int i = 0; i < this.items.size(); i++)
       {
-         buffer.append("\n");
+         if (INDENTNR > 0)
+            buffer.append("\n");
          JSONModelValue jsonValue = this.items.get(i);
-         jsonValue.toJSON(buffer, indent + 1);
+         jsonValue.toJSON(buffer, indent + 1, INDENTNR);
          if (i < this.items.size() - 1)
          {
             buffer.append(",");
          }
       }
-      if (this.items.size() > 0)
+      if (this.items.size() > 0 && INDENTNR > 0)
       {
          buffer.append("\n");
-         buffer.append(JSONModelObject.SPACES.substring(0, indent * JSONModelObject.INDENTNR));
+         buffer.append(JSONModelObject.SPACES(indent * INDENTNR));
       }
       buffer.append("]");
    }
