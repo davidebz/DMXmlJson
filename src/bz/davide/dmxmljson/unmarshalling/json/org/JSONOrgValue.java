@@ -56,8 +56,12 @@ public class JSONOrgValue implements Value
    @Override
    public double decimal()
    {
-      //return ((Double)value).doubleValue();
-      return Double.parseDouble((String)value);
+      if (value instanceof Integer)
+      {
+         return (Integer)value;
+      }
+      return ((Double)value).doubleValue();
+      //return Double.parseDouble((String)value);
    }
 
    @Override

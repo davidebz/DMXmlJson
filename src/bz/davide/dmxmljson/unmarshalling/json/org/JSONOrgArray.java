@@ -29,10 +29,12 @@ public class JSONOrgArray implements Array
 {
    JSONArray jsonArray;
    int pos = 0;
+   int len;
 
    public JSONOrgArray(JSONArray jsonArray)
    {
       this.jsonArray = jsonArray;
+      this.len = jsonArray.length();
    }
 
    @Override
@@ -46,7 +48,7 @@ public class JSONOrgArray implements Array
       Object val;
       try
       {
-         if (pos >= jsonArray.length())
+         if (pos >= len)
          {
             return null;
          }

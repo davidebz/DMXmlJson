@@ -19,7 +19,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>
 
 package bz.davide.dmxmljson.unmarshalling.json.org;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import bz.davide.dmxmljson.unmarshalling.Structure;
@@ -45,61 +44,36 @@ public class JSONOrgStructure implements Structure
    @Override
    public String getRefId() throws Exception
    {
-      if (!jsonObject.has("__refid"))
-      {
-         return null;
-      }
-      String refid = this.jsonObject.getString("__refid");
+      String refid = this.jsonObject.optString("__refid", null);
       return refid;
    }
 
    @Override
    public String getRuntimeClassName(String compileTimeClassName)
    {
-      try
-      {
-         String subclass = compileTimeClassName;
-         if (jsonObject.has("__subclass"))
+         String subclass = this.jsonObject.optString("__subclass", null);
+         if (subclass == null)
          {
-            subclass = this.jsonObject.getString("__subclass");
+            subclass = compileTimeClassName;
          }
          return subclass;
-      }
-      catch (JSONException e)
-      {
-         return compileTimeClassName;
-      }
    }
 
    @Override
    public Value property(String name)
    {
-      Object val;
-      try
-      {
-         if (!jsonObject.has(name))
-         {
-            return null;
-         }
-         val = this.jsonObject.get(name);
-         return new JSONOrgValue(val);
-      }
-      catch (JSONException e)
+      Object val = jsonObject.opt(name);
+      if (val == null)
       {
          return null;
       }
-
-
+      return new JSONOrgValue(val);
    }
 
    @Override
    public String getId() throws Exception
    {
-      if (!this.jsonObject.has("__id"))
-      {
-         return null;
-      }
-      String id = this.jsonObject.getString("__id");
+      String id = this.jsonObject.optString("__id", null);
       return id;
    }
 

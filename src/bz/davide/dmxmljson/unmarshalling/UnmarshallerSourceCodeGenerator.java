@@ -162,7 +162,7 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
             out.println("                     if (value.isNull())                                           ");
             out.println("                        arrayList.add(null);                                       ");
             out.println("                     else                                                          ");
-           
+
             Class componentType;
             if (f.type.isArray())
             {
@@ -182,19 +182,19 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
             }
             else if (componentType == Integer.class || componentType == Integer.TYPE)
             {
-               out.println("                        arrayList.add(value.integer());");
+               out.println("                        arrayList.add((int)value.integer());");
             }
             else
             {
                this.addClassToList(componentType);
 
                out.println("                     {                                                                   ");
-               out.println("                        String refid = value.structure().getRefId();    ");
+               out.println("                        bz.davide.dmxmljson.unmarshalling.Structure tmpStructure = value.structure();");
+               out.println("                        String refid = tmpStructure.getRefId();    ");
                out.println("                        if (refid != null)                              ");
                out.println("                           arrayList.add(identities.get(refid));                                                ");
                out.println("                        else {");
-               out.println("                           bz.davide.dmxmljson.unmarshalling.Structure tmpStructure = value.structure();");
-               
+
                out.println("                           Object o = newInstance(tmpStructure.getRuntimeClassName(\"" +
                            componentType.getSimpleName() +
                            "\"));              ");
@@ -233,7 +233,7 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
             out.println("                  while ((value = arr.nextItem()) != null) {                       ");
             out.println("                     bz.davide.dmxmljson.unmarshalling.Array item = value.array();        ");
 
-            
+
             Class keyType = (Class) ((ParameterizedType) f.genericType).getActualTypeArguments()[0];
             if (keyType == Integer.class)
             {
