@@ -26,9 +26,11 @@ public interface Array
 {
    public void open();
 
-   // return null if no more items. 
+   // return null if no more items.
    public Value nextItem();
 
    public void close();
+
+   int length();
 
 }

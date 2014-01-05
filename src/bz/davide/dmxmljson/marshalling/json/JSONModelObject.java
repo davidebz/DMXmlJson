@@ -42,9 +42,13 @@ public class JSONModelObject extends JSONModelValue
       {
          String attrName = this.attributeNames.get(i);
          if (INDENTNR > 0)
+         {
             buffer.append("\n");
+         }
          buffer.append(SPACES((indent + 1) * INDENTNR));
+         buffer.append("\"");
          buffer.append(attrName);
+         buffer.append("\"");
          buffer.append(": ");
          JSONModelValue value = this.attributes.get(attrName);
          if (value instanceof JSONModelObject)
@@ -76,7 +80,9 @@ public class JSONModelObject extends JSONModelValue
    {
       String ret = SPACES_;
       while (ret.length() < n)
+      {
          ret += SPACES_;
+      }
       return ret.substring(0, n);
    }
 

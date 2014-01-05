@@ -62,11 +62,11 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
       {
          if (this.type == Access.FIELD) // When using field access a special constructor is used, to avoid "regular" code to run!
          {
-            out.println("            return new " + clazz.getName() + "();");
+            out.println("            return new " + clazz.getName() + defaultConstructorArguments + ";");
          }
          else
          {
-            out.println("            return new " + clazz.getName() + "();");
+            out.println("            return new " + clazz.getName() + defaultConstructorArguments + ";");
          }
 
       }
@@ -154,24 +154,71 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
          {
 
          }
-         else if (f.type.isArray() || f.type == ArrayList.class)
+         else if (f.type.isArray())
+         {
+            Class componentType = f.type.getComponentType();
+
+            out.println("                  bz.davide.dmxmljson.unmarshalling.Array arr = value.array();        ");
+            out.println("                  " + componentType.getName() + "[] arrayList = new " + componentType.getName() + "[arr.length()];       ");
+            out.println("                  for (int i = 0; i < arrayList.length; i++) {                       ");
+            out.println("                     value = arr.nextItem();                                       ");
+            if (!componentType.isPrimitive())
+            {
+               out.println("                     if (value.isNull())                                           ");
+               out.println("                        arrayList[i] = null;                                       ");
+               out.println("                     else                                                          ");
+            }
+            if (componentType == String.class)
+            {
+               out.println("                        arrayList[i] = (value.string());");
+            }
+            else if (componentType == Double.class)
+            {
+               out.println("                        arrayList[i] = (value.decimal());");
+            }
+            else if (componentType == Integer.class || componentType == Integer.TYPE)
+            {
+               out.println("                        arrayList[i] = ((int)value.integer());");
+            }
+            else
+            {
+               this.addClassToList(componentType);
+
+               out.println("                     {                                                                   ");
+               out.println("                        bz.davide.dmxmljson.unmarshalling.Structure tmpStructure = value.structure();");
+               out.println("                        String refid = tmpStructure.getRefId();    ");
+               out.println("                        if (refid != null)                              ");
+               out.println("                           arrayList[i] = (" + componentType.getName() + ")(identities.get(refid));                                                ");
+               out.println("                        else {");
+
+               out.println("                           Object o = newInstance(tmpStructure.getRuntimeClassName(\"" +
+                           componentType.getSimpleName() +
+                           "\"));              ");
+               out.println("                           internalUnmarschall(tmpStructure, o.getClass().getName(), o, identities); ");
+               out.println("                           arrayList[i] = (" + componentType.getName() + ")(o);                                                ");
+               out.println("                        }");
+               out.println("                     }                                                                   ");
+            }
+            out.println("                  }                                                                   ");
+
+               out.println("                  ((" +
+                           clazz.getSimpleName() +
+                           ")obj)." +
+                           f.writeSetCode("arrayList") +
+                           ";");
+
+         }
+         else if (f.type == ArrayList.class)
          {
             out.println("                  bz.davide.dmxmljson.unmarshalling.Array arr = value.array();        ");
-            out.println("                  java.util.ArrayList arrayList = new java.util.ArrayList();       ");
+            out.println("                  java.util.ArrayList arrayList = new java.util.ArrayList(arr.length());       ");
             out.println("                  while ((value = arr.nextItem()) != null) {                       ");
             out.println("                     if (value.isNull())                                           ");
             out.println("                        arrayList.add(null);                                       ");
             out.println("                     else                                                          ");
 
-            Class componentType;
-            if (f.type.isArray())
-            {
-               componentType = f.type.getComponentType();
-            }
-            else
-            {
-               componentType = (Class) ((ParameterizedType) f.genericType).getActualTypeArguments()[0];
-            }
+            Class componentType = (Class) ((ParameterizedType) f.genericType).getActualTypeArguments()[0];
+
             if (componentType == String.class)
             {
                out.println("                        arrayList.add(value.string());");
@@ -204,26 +251,12 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
                out.println("                     }                                                                   ");
             }
             out.println("                  }                                                                   ");
-            if (f.type.isArray())
-            {
-               out.println("                  ((" +
-                           clazz.getSimpleName() +
-                           ")obj)." +
-                           f.writeSetCode("(" +
-                                          componentType.getName() +
-                                          "[])arrayList.toArray(new " +
-                                          componentType.getName() +
-                                          "[0])") +
-                           ";");
-            }
-            else
-            {
-               out.println("                  ((" +
+            out.println("                  ((" +
                            clazz.getSimpleName() +
                            ")obj)." +
                            f.writeSetCode("arrayList") +
                            ";");
-            }
+
          }
          else if (f.type == HashMap.class)
          {

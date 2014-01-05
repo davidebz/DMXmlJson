@@ -69,4 +69,9 @@ public class JSONOrgArray implements Array
    {
    }
 
+   @Override
+   public int length()
+   {
+      return jsonArray.length();
+   }
 }

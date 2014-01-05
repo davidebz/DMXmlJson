@@ -66,4 +66,11 @@ public class GWTDOMArray implements Array
 
    }
 
+   @Override
+   public int length()
+   {
+      return elements.size();
+   }
+
+
 }

@@ -66,4 +66,10 @@ public class GWTXMLArray implements Array
 
    }
 
+   @Override
+   public int length()
+   {
+      return elements.size();
+   }
+
 }

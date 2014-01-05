@@ -61,4 +61,10 @@ public class GWTArray implements Array
 
    }
 
+   @Override
+   public int length()
+   {
+      return jsonArray.size();
+   }
+
 }

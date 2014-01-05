@@ -41,6 +41,7 @@ public abstract class CommonSourceCodeGenerator
    protected Access                        type;
    protected HashMap<String, StringBuffer> generatedClassesConstructorContentByPackageName;
    protected ArrayList<Class>              allClasses;
+   protected String                        defaultConstructorArguments;
 
    public CommonSourceCodeGenerator(String args[], String rootClass) throws ClassNotFoundException,
             IOException
@@ -53,13 +54,14 @@ public abstract class CommonSourceCodeGenerator
       this.targetClassName = args[2];
       this.targetSourceFolder = args[3];
       this.type = Access.valueOf(args[4]);
+      this.defaultConstructorArguments = args[5];
       Class mainClass;
-      mainClass = Class.forName(args[5]);
-      int remainingParams = args.length - 6;
+      mainClass = Class.forName(args[6]);
+      int remainingParams = args.length - 7;
       otherClasses = new Class[remainingParams];
       for (int i = 0; i < remainingParams; i++)
       {
-         otherClasses[i] = Class.forName(args[6 + i]);
+         otherClasses[i] = Class.forName(args[7 + i]);
 
       }
 

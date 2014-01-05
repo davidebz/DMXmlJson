@@ -66,4 +66,10 @@ public class W3CXMLArray implements Array
 
    }
 
+   @Override
+   public int length()
+   {
+      return elements.size();
+   }
+
 }
