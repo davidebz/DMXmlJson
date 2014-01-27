@@ -84,6 +84,7 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
                      "\", obj, identities);");
          this.addClassToList(clazz.getSuperclass());
       }
+      out.println("            structure.open();");
       out.println("            String id = structure.getId();");
       out.println("            if (id != null)");
       out.println("               identities.put(id, obj);");
@@ -159,6 +160,7 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
             Class componentType = f.type.getComponentType();
 
             out.println("                  bz.davide.dmxmljson.unmarshalling.Array arr = value.array();        ");
+            out.println("                  arr.open();        ");
             out.println("                  " + componentType.getName() + "[] arrayList = new " + componentType.getName() + "[arr.length()];       ");
             out.println("                  for (int i = 0; i < arrayList.length; i++) {                       ");
             out.println("                     value = arr.nextItem();                                       ");
@@ -200,6 +202,7 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
                out.println("                     }                                                                   ");
             }
             out.println("                  }                                                                   ");
+            out.println("                  arr.close();        ");
 
                out.println("                  ((" +
                            clazz.getSimpleName() +
@@ -211,6 +214,7 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
          else if (f.type == ArrayList.class)
          {
             out.println("                  bz.davide.dmxmljson.unmarshalling.Array arr = value.array();        ");
+            out.println("                  arr.open();        ");
             out.println("                  java.util.ArrayList arrayList = new java.util.ArrayList(arr.length());       ");
             out.println("                  while ((value = arr.nextItem()) != null) {                       ");
             out.println("                     if (value.isNull())                                           ");
@@ -251,6 +255,7 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
                out.println("                     }                                                                   ");
             }
             out.println("                  }                                                                   ");
+            out.println("                  arr.close();        ");
             out.println("                  ((" +
                            clazz.getSimpleName() +
                            ")obj)." +
@@ -292,6 +297,7 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
                out.println("                     hashMap.put(key,o);");
             }
             out.println("                  }                       ");
+
             out.println("                  ((" +
                         clazz.getSimpleName() +
                         ")obj)." +
@@ -323,6 +329,7 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
          out.println("               }");
 
       }
+      out.println("            structure.close();");
 
       out.println("         }");
       out.println("      });");

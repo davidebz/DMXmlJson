@@ -34,7 +34,7 @@ public interface Value
 
    void booleanValue(boolean value);
 
-   Array array();
+   Array array(int len);
 
    Structure structure();
 }

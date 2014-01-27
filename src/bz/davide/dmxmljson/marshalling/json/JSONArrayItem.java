@@ -69,7 +69,7 @@ public class JSONArrayItem implements Value
    }
 
    @Override
-   public Array array()
+   public Array array(int len)
    {
       JSONStructureArray jsonStructureArray = new JSONStructureArray();
       this.jsonModelArray.items.set(this.index, jsonStructureArray.array);

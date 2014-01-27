@@ -113,7 +113,7 @@ public class XMLValue implements Value
    }
 
    @Override
-   public Array array()
+   public Array array(int len)
    {
       return new XMLArray(this.parent, this.propertyName, this.rules);
    }

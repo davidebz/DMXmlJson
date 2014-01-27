@@ -119,7 +119,7 @@ public class MarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
                         "[])value;                        ");
             out.println("               bz.davide.dmxmljson.marshalling.Array array = structure.property(\"" +
                         f.name +
-                        "\").array();        ");
+                        "\").array(rawarray.length);        ");
             out.println("               for (Object o: rawarray) {                                    ");
             out.println("                  if (o == null)                                              ");
             out.println("                     array.item().nullValue();                                ");
@@ -149,7 +149,7 @@ public class MarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
             out.println("               java.util.ArrayList arrayList = (java.util.ArrayList)value;                        ");
             out.println("               bz.davide.dmxmljson.marshalling.Array array = structure.property(\"" +
                         f.name +
-                        "\").array();        ");
+                        "\").array(arrayList.size());        ");
             out.println("               for (Object o: arrayList) {                                    ");
             out.println("                  if (o == null)                                              ");
             out.println("                     array.item().nullValue();                                ");
@@ -162,6 +162,10 @@ public class MarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
             if (componentType == String.class)
             {
                out.println("                     array.item().string((String)o);                          ");
+            }
+            else if (componentType == Integer.class)
+            {
+               out.println("                     array.item().integer((Integer)o);                          ");
             }
             else
             {
@@ -179,13 +183,13 @@ public class MarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
             out.println("               java.util.HashMap hashMap = (java.util.HashMap)value;                        ");
             out.println("               bz.davide.dmxmljson.marshalling.Array array = structure.property(\"" +
                         f.name +
-                        "\").array();        ");
+                        "\").array(hashMap.size());        ");
             out.println("               java.util.ArrayList keySelList = new java.util.ArrayList(hashMap.keySet());");
             out.println("               java.util.Collections.sort(keySelList);");
             out.println("               for (Object key: keySelList) {");
-            out.println("                  bz.davide.dmxmljson.marshalling.Array item = array.item().array(); ");
+            out.println("                  bz.davide.dmxmljson.marshalling.Array item = array.item().array(2); ");
 
-            
+
             Class keyType = (Class) ((ParameterizedType) f.genericType).getActualTypeArguments()[0];
             if (keyType == Integer.class)
             {

@@ -71,7 +71,7 @@ public class JSONValue implements Value
    }
 
    @Override
-   public Array array()
+   public Array array(int len)
    {
       JSONStructureArray jsonStructureArray = new JSONStructureArray();
       this.jsonModelObject.putAttribute(this.name, jsonStructureArray.array);
