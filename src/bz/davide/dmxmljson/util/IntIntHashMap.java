@@ -32,16 +32,17 @@ public class IntIntHashMap<T>
 
    public T put(int[] keys, T obj)
    {
+      HashMap nextMap;
       HashMap tmp = map;
       for (int i = 0; i < keys.length - 1; i++)
       {
-         tmp = (HashMap) tmp.get(keys[i]);
-         if (tmp == null)
+         nextMap = (HashMap) tmp.get(keys[i]);
+         if (nextMap == null)
          {
-            HashMap newmap = new HashMap();
-            tmp.put(keys[i], newmap);
-            tmp = newmap;
+            nextMap = new HashMap();
+            tmp.put(keys[i], nextMap);
          }
+         tmp = nextMap;
       }
       return (T) tmp.put(keys[keys.length - 1], obj);
    }
