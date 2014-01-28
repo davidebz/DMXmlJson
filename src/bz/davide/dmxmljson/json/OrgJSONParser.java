@@ -17,13 +17,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>
 */
 
-package bz.davide.dmxmljson.util;
+package bz.davide.dmxmljson.json;
 
 import java.io.IOException;
 
 import org.json.JSONObject;
 
+import bz.davide.dmxmljson.unmarshalling.IOUtil;
 import bz.davide.dmxmljson.unmarshalling.Structure;
+import bz.davide.dmxmljson.unmarshalling.json.JSONParser;
 import bz.davide.dmxmljson.unmarshalling.json.org.JSONOrgStructure;
 
 public class OrgJSONParser implements JSONParser
@@ -39,20 +41,8 @@ public class OrgJSONParser implements JSONParser
       }
       catch (Exception exxx)
       {
-         throw wrapIntoIOException(exxx);
+         throw IOUtil.wrapIntoIOException(exxx);
       }
    }
 
-   public static IOException wrapIntoIOException(Exception e)
-   {
-      /*
-      StringWriter sw = new StringWriter();
-      PrintWriter pw = new PrintWriter(sw);
-      e.printStackTrace(pw);
-      pw.close();
-      IOException ioxxx = new IOException(sw.getBuffer().toString());
-      */
-      IOException ioxxx = new IOException(e.getClass().getName() + ": " + e.getMessage());
-      return ioxxx;
-   }
 }

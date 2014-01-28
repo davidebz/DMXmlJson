@@ -17,13 +17,16 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>
 */
 
-package bz.davide.dmxmljson.util;
+package bz.davide.dmxmljson.json;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+
+import bz.davide.dmxmljson.unmarshalling.json.AsyncJSONDownloader;
+import bz.davide.dmxmljson.unmarshalling.json.AsyncJSONDownloaderCallback;
 
 public class HTTPAsyncJSONDownloader implements AsyncJSONDownloader
 {
