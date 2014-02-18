@@ -1,7 +1,7 @@
 /*
 DMXmlJson - Java binding framework for xml and json - http://www.davide.bz/dmxj
 
-Copyright (C) 2013 Davide Montesin <d@vide.bz> - Bolzano/Bozen - Italy
+Copyright (C) 2013-2014 Davide Montesin <d@vide.bz> - Bolzano/Bozen - Italy
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by
