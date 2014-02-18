@@ -30,12 +30,14 @@ public class JSONArrayItem implements Value
 {
    JSONModelArray jsonModelArray;
    int            index;
+   int            indent;
 
-   public JSONArrayItem(JSONModelArray jsonModelArray, int index)
+   public JSONArrayItem(JSONModelArray jsonModelArray, int index, int indent)
    {
       super();
       this.jsonModelArray = jsonModelArray;
       this.index = index;
+      this.indent = indent;
    }
 
    @Override
@@ -71,7 +73,7 @@ public class JSONArrayItem implements Value
    @Override
    public Array array(int len)
    {
-      JSONStructureArray jsonStructureArray = new JSONStructureArray();
+      JSONStructureArray jsonStructureArray = new JSONStructureArray(indent);
       this.jsonModelArray.items.set(this.index, jsonStructureArray.array);
       return jsonStructureArray;
    }
@@ -79,7 +81,7 @@ public class JSONArrayItem implements Value
    @Override
    public Structure structure()
    {
-      JSONStructure jsonStructure = new JSONStructure();
+      JSONStructure jsonStructure = new JSONStructure(indent);
       this.jsonModelArray.items.set(this.index, jsonStructure.jsonObject);
       return jsonStructure;
    }

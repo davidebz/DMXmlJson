@@ -17,39 +17,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>
 */
 
-package bz.davide.dmxmljson.marshalling.json;
+package bz.davide.dmxmljson.unmarshalling;
 
-import bz.davide.dmxmljson.marshalling.Array;
-import bz.davide.dmxmljson.marshalling.Value;
-
-/**
- * @author Davide Montesin <d@vide.bz>
- */
-public class JSONStructureArray implements Array
+public interface EmptyFieldChecker<T>
 {
-   JSONModelArray array = new JSONModelArray();
-   int            indent;
-
-   public JSONStructureArray(int indent)
-   {
-      this.indent = indent;
-   }
-
-   @Override
-   public void open()
-   {
-   }
-
-   @Override
-   public Value item()
-   {
-      int index = this.array.items.size();
-      this.array.items.add(null);
-      return new JSONArrayItem(this.array, index, indent);
-   }
-
-   @Override
-   public void close()
-   {
-   }
+   public void check(T obj);
 }

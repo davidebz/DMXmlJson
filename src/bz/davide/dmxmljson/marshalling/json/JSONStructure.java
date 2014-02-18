@@ -29,6 +29,13 @@ public class JSONStructure implements Structure
 {
    JSONModelObject jsonObject = new JSONModelObject();
 
+   int             indent;
+
+   public JSONStructure(int indent)
+   {
+      this.indent = indent;
+   }
+
    @Override
    public void open(String compiletimeClassName, String runtimeClassName, String refid) throws Exception
    {
@@ -45,9 +52,8 @@ public class JSONStructure implements Structure
    @Override
    public Value property(String name)
    {
-      return new JSONValue(name, this.jsonObject);
+      return new JSONValue(name, this.jsonObject, indent);
    }
-
 
    @Override
    public void close()
@@ -76,6 +82,7 @@ public class JSONStructure implements Structure
    {
       this.jsonObject.toJSON(buffer, 0, indent);
    }
+
    public String toJSON(int indent)
    {
       StringBuffer sb = new StringBuffer();
@@ -86,6 +93,6 @@ public class JSONStructure implements Structure
    @Override
    public String toString()
    {
-      return toJSON(3);
+      return toJSON(indent);
    }
 }

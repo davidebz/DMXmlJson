@@ -26,10 +26,11 @@ import java.util.HashMap;
  */
 public class Unmarshaller
 {
-   private HashMap<String, ClassUnmarshaller> classUnmarshallers = new HashMap<String, ClassUnmarshaller>();
-   private HashMap<String, InstanceFactory>   instanceFactories  = new HashMap<String, InstanceFactory>();
+   private HashMap<String, ClassUnmarshaller>   classUnmarshallers = new HashMap<String, ClassUnmarshaller>();
+   private HashMap<String, InstanceFactory>     instanceFactories  = new HashMap<String, InstanceFactory>();
+   protected HashMap<String, EmptyFieldChecker> emptyObjectCheck   = new HashMap<String, EmptyFieldChecker>();
 
-   private HashMap<String, String>            short2longName     = new HashMap<String, String>();
+   private HashMap<String, String>              short2longName     = new HashMap<String, String>();
 
    protected void putInstanceFactory(String name, InstanceFactory instanceFactory)
    {

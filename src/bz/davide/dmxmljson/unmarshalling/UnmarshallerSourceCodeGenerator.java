@@ -50,6 +50,49 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
    protected void writeClass(Class clazz, PrintWriter out) throws FileNotFoundException, IOException
    {
 
+      ArrayList<FieldOrMethod> fom = new ArrayList<FieldOrMethod>();
+      FieldOrMethod.allFieldOrMethods(clazz, this.type, fom);
+
+      out.println("      this.emptyObjectCheck.put(\"" +
+                  clazz.getName() +
+                  "\", new bz.davide.dmxmljson.unmarshalling.EmptyFieldChecker<" +
+                  clazz.getName() +
+                  ">() {");
+      out.println("         @Override public void check(" + clazz.getName() + "  ret){");
+      if (this.type == Access.FIELD)
+      {
+         for (int i = 0; i < fom.size(); i++)
+         {
+            FieldOrMethod f = fom.get(i);
+            out.println("            // " + f.name);
+            if (f.type == Long.TYPE || f.type == Integer.TYPE || f.type == Double.TYPE)
+            {
+               out.println("            if (ret." + f.name + " != 0)");
+            }
+            else if (f.type == Boolean.TYPE)
+            {
+               out.println("            if (ret." + f.name + " != false)");
+            }
+            else
+            {
+               out.println("            if (ret." + f.name + " != null)");
+            }
+            out.println("               throw new RuntimeException(\"The constructor initialized the field " +
+                        clazz.getName() +
+                        "." +
+                        f.name +
+                        "\");");
+         }
+         Class superClass = clazz.getSuperclass();
+         if (superClass != null && !(superClass == Object.class))
+         {
+            out.println("            emptyObjectCheck.get(\"" + superClass.getName() + "\").check(ret);");
+         }
+
+      }
+      out.println("         }");
+      out.println("      });");
+
       out.println("      this.putInstanceFactory(\"" +
                   clazz.getName() +
                   "\", new bz.davide.dmxmljson.unmarshalling.InstanceFactory() {");
@@ -60,13 +103,20 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
       }
       else
       {
-         if (this.type == Access.FIELD) // When using field access a special constructor is used, to avoid "regular" code to run!
+         if (this.type == Access.FIELD)
          {
-            out.println("            return new " + clazz.getName() + defaultConstructorArguments + ";");
+            out.println("            " +
+                        clazz.getName() +
+                        " ret = new " +
+                        clazz.getName() +
+                        this.defaultConstructorArguments +
+                        ";");
+            out.println("            emptyObjectCheck.get(\"" + clazz.getName() + "\").check(ret);");
+            out.println("            return ret;");
          }
          else
          {
-            out.println("            return new " + clazz.getName() + defaultConstructorArguments + ";");
+            out.println("            return new " + clazz.getName() + this.defaultConstructorArguments + ";");
          }
 
       }
@@ -89,8 +139,6 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
       out.println("            if (id != null)");
       out.println("               identities.put(id, obj);");
       out.println("            bz.davide.dmxmljson.unmarshalling.Value value;");
-      ArrayList<FieldOrMethod> fom = new ArrayList<FieldOrMethod>();
-      FieldOrMethod.allFieldOrMethods(clazz, this.type, fom);
       for (int i = 0; i < fom.size(); i++)
       {
          FieldOrMethod f = fom.get(i);
@@ -161,7 +209,11 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
 
             out.println("                  bz.davide.dmxmljson.unmarshalling.Array arr = value.array();        ");
             out.println("                  arr.open();        ");
-            out.println("                  " + componentType.getName() + "[] arrayList = new " + componentType.getName() + "[arr.length()];       ");
+            out.println("                  " +
+                        componentType.getName() +
+                        "[] arrayList = new " +
+                        componentType.getName() +
+                        "[arr.length()];       ");
             out.println("                  for (int i = 0; i < arrayList.length; i++) {                       ");
             out.println("                     value = arr.nextItem();                                       ");
             if (!componentType.isPrimitive())
@@ -190,25 +242,29 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
                out.println("                        bz.davide.dmxmljson.unmarshalling.Structure tmpStructure = value.structure();");
                out.println("                        String refid = tmpStructure.getRefId();    ");
                out.println("                        if (refid != null)                              ");
-               out.println("                           arrayList[i] = (" + componentType.getName() + ")(identities.get(refid));                                                ");
+               out.println("                           arrayList[i] = (" +
+                           componentType.getName() +
+                           ")(identities.get(refid));                                                ");
                out.println("                        else {");
 
                out.println("                           Object o = newInstance(tmpStructure.getRuntimeClassName(\"" +
                            componentType.getSimpleName() +
                            "\"));              ");
                out.println("                           internalUnmarschall(tmpStructure, o.getClass().getName(), o, identities); ");
-               out.println("                           arrayList[i] = (" + componentType.getName() + ")(o);                                                ");
+               out.println("                           arrayList[i] = (" +
+                           componentType.getName() +
+                           ")(o);                                                ");
                out.println("                        }");
                out.println("                     }                                                                   ");
             }
             out.println("                  }                                                                   ");
             out.println("                  arr.close();        ");
 
-               out.println("                  ((" +
-                           clazz.getSimpleName() +
-                           ")obj)." +
-                           f.writeSetCode("arrayList") +
-                           ";");
+            out.println("                  ((" +
+                        clazz.getSimpleName() +
+                        ")obj)." +
+                        f.writeSetCode("arrayList") +
+                        ";");
 
          }
          else if (f.type == ArrayList.class)
@@ -257,10 +313,10 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
             out.println("                  }                                                                   ");
             out.println("                  arr.close();        ");
             out.println("                  ((" +
-                           clazz.getSimpleName() +
-                           ")obj)." +
-                           f.writeSetCode("arrayList") +
-                           ";");
+                        clazz.getSimpleName() +
+                        ")obj)." +
+                        f.writeSetCode("arrayList") +
+                        ";");
 
          }
          else if (f.type == HashMap.class)
@@ -270,7 +326,6 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
             out.println("                  java.util.HashMap hashMap = new java.util.HashMap();       ");
             out.println("                  while ((value = arr.nextItem()) != null) {                       ");
             out.println("                     bz.davide.dmxmljson.unmarshalling.Array item = value.array();        ");
-
 
             Class keyType = (Class) ((ParameterizedType) f.genericType).getActualTypeArguments()[0];
             if (keyType == Integer.class)

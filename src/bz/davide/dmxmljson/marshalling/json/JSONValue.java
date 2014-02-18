@@ -31,12 +31,14 @@ public class JSONValue implements Value
 
    String          name;
    JSONModelObject jsonModelObject;
+   int             indent;
 
-   public JSONValue(String name, JSONModelObject jsonModelObject)
+   public JSONValue(String name, JSONModelObject jsonModelObject, int indent)
    {
       super();
       this.name = name;
       this.jsonModelObject = jsonModelObject;
+      this.indent = indent;
    }
 
    @Override
@@ -73,7 +75,7 @@ public class JSONValue implements Value
    @Override
    public Array array(int len)
    {
-      JSONStructureArray jsonStructureArray = new JSONStructureArray();
+      JSONStructureArray jsonStructureArray = new JSONStructureArray(indent);
       this.jsonModelObject.putAttribute(this.name, jsonStructureArray.array);
       return jsonStructureArray;
    }
@@ -81,7 +83,7 @@ public class JSONValue implements Value
    @Override
    public Structure structure()
    {
-      JSONStructure jsonStructure = new JSONStructure();
+      JSONStructure jsonStructure = new JSONStructure(indent);
       this.jsonModelObject.putAttribute(this.name, jsonStructure.jsonObject);
       return jsonStructure;
    }
