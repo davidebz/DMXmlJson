@@ -1,5 +1,5 @@
 
-LIB_VERSION="dm-xml-json-lib-1.0.0.jar"
+LIB_VERSION="dm-xml-json-lib-1.0.1.jar"
 
 cd $(dirname "$0")
 DIST_DIR=$(pwd -P)
