@@ -177,7 +177,7 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
          else if (f.type == Long.class || f.type == Long.TYPE)
          {
             out.println("                  (("
-                        + clazz.getSimpleName()
+                        + clazz.getCanonicalName()
                         + ")obj)."
                         + f.writeSetCode("value.integer()")
                         + ";");
@@ -185,7 +185,7 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
          else if (f.type == Double.TYPE)
          {
             out.println("                  (("
-                        + clazz.getSimpleName()
+                        + clazz.getCanonicalName()
                         + ")obj)."
                         + f.writeSetCode("value.decimal()")
                         + ";");
@@ -193,7 +193,7 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
          else if (f.type == Boolean.TYPE)
          {
             out.println("                  (("
-                        + clazz.getSimpleName()
+                        + clazz.getCanonicalName()
                         + ")obj)."
                         + f.writeSetCode("value.booleanValue()")
                         + ";");
@@ -366,17 +366,17 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
             out.println("                     (("
                         + clazz.getCanonicalName()
                         + ")obj)."
-                        + f.writeSetCode("(" + f.type.getName() + ")identities.get(refid)")
+                        + f.writeSetCode("(" + f.type.getCanonicalName() + ")identities.get(refid)")
                         + ";");
             out.println("                  else {");
             out.println("                     Object o = newInstance(value.structure().getRuntimeClassName(\""
-                        + f.type.getSimpleName()
+                        + getShortName(f.type)
                         + "\"));              ");
             out.println("                     internalUnmarschall(value.structure(), o.getClass().getName(), o, identities); ");
             out.println("                     (("
                         + clazz.getCanonicalName()
                         + ")obj)."
-                        + f.writeSetCode("(" + f.type.getName() + ")o")
+                        + f.writeSetCode("(" + f.type.getCanonicalName() + ")o")
                         + ";");
             out.println("                  }");
          }
@@ -391,4 +391,16 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
       out.close();
 
    }
+
+   public static String getShortName(Class clazz)
+   {
+      String name = clazz.getName();
+      int pos = name.lastIndexOf('.');
+      if (pos >= 0)
+      {
+         name = name.substring(pos + 1);
+      }
+      return name;
+   }
+
 }
