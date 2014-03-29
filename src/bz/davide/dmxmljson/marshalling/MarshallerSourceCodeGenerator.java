@@ -25,7 +25,6 @@ import java.io.PrintWriter;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import bz.davide.dmxmljson.CommonSourceCodeGenerator;
 import bz.davide.dmxmljson.FieldOrMethod;
 
@@ -49,9 +48,9 @@ public class MarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
    protected void writeClass(Class clazz, PrintWriter out) throws FileNotFoundException, IOException
    {
 
-      out.println("      this.putClassMarshaller(\"" +
-                  clazz.getName() +
-                  "\", new bz.davide.dmxmljson.marshalling.ClassMarshaller() {");
+      out.println("      this.putClassMarshaller(\""
+                  + clazz.getName()
+                  + "\", new bz.davide.dmxmljson.marshalling.ClassMarshaller() {");
       out.println("         @Override public void marshall(Object obj, String compileTimeClassName, bz.davide.dmxmljson.marshalling.Structure structure, java.util.IdentityHashMap<Object, bz.davide.dmxmljson.marshalling.Structure> identities, long[] seq, boolean superClass) throws Exception {");
       out.println("            if (!superClass) {");
       out.println("               if (isReference(structure, obj, identities, seq))");
@@ -62,9 +61,9 @@ public class MarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
       out.println("            }");
       if (clazz.getSuperclass() != null && !clazz.getSuperclass().getName().equals("java.lang.Object"))
       {
-         out.println("            internalMarschall(obj, \"" +
-                     clazz.getSuperclass().getName() +
-                     "\", \"N/A\",structure, identities, seq, true);");
+         out.println("            internalMarschall(obj, \""
+                     + clazz.getSuperclass().getName()
+                     + "\", \"N/A\",structure, identities, seq, true);");
          this.addClassToList(clazz.getSuperclass());
       }
       out.println("            Object value;");
@@ -74,52 +73,52 @@ public class MarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
       {
          FieldOrMethod f = fom.get(i);
          out.println("            // " + f.name);
-         out.println("            value = ((" + clazz.getName() + ")obj)." + f.name + ";");
+         out.println("            value = ((" + clazz.getCanonicalName() + ")obj)." + f.name + ";");
          out.println("            if (value == null)");
          out.println("               structure.property(\"" + f.name + "\").nullValue();");
          out.println("            else");
          out.println("            {");
          if (f.type == String.class)
          {
-            out.println("                    structure.property(\"" +
-                        f.name +
-                        "\").string((String)value);                          ");
+            out.println("                    structure.property(\""
+                        + f.name
+                        + "\").string((String)value);                          ");
          }
          else if (f.type == Integer.class || f.type == Integer.TYPE)
          {
-            out.println("                    structure.property(\"" +
-                        f.name +
-                        "\").integer((Integer)value);                          ");
+            out.println("                    structure.property(\""
+                        + f.name
+                        + "\").integer((Integer)value);                          ");
          }
          else if (f.type == Long.class || f.type == Long.TYPE)
          {
-            out.println("                    structure.property(\"" +
-                        f.name +
-                        "\").integer((Long)value);                          ");
+            out.println("                    structure.property(\""
+                        + f.name
+                        + "\").integer((Long)value);                          ");
          }
          else if (f.type == Double.TYPE)
          {
-            out.println("                    structure.property(\"" +
-                        f.name +
-                        "\").decimal((Double)value);                          ");
+            out.println("                    structure.property(\""
+                        + f.name
+                        + "\").decimal((Double)value);                          ");
          }
          else if (f.type == Boolean.TYPE)
          {
-            out.println("                    structure.property(\"" +
-                        f.name +
-                        "\").booleanValue((Boolean)value);                          ");
+            out.println("                    structure.property(\""
+                        + f.name
+                        + "\").booleanValue((Boolean)value);                          ");
          }
          else if (f.type.isArray())
          {
             Class componentType = f.type.getComponentType();
-            out.println("               " +
-                        componentType.getName() +
-                        "[] rawarray = (" +
-                        componentType.getName() +
-                        "[])value;                        ");
-            out.println("               bz.davide.dmxmljson.marshalling.Array array = structure.property(\"" +
-                        f.name +
-                        "\").array(rawarray.length);        ");
+            out.println("               "
+                        + componentType.getName()
+                        + "[] rawarray = ("
+                        + componentType.getName()
+                        + "[])value;                        ");
+            out.println("               bz.davide.dmxmljson.marshalling.Array array = structure.property(\""
+                        + f.name
+                        + "\").array(rawarray.length);        ");
             out.println("               for (Object o: rawarray) {                                    ");
             out.println("                  if (o == null)                                              ");
             out.println("                     array.item().nullValue();                                ");
@@ -138,18 +137,18 @@ public class MarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
             else
             {
                this.addClassToList(componentType);
-               out.println("                     internalMarschall(o, o.getClass().getName(), \"" +
-                           componentType.getName() +
-                           "\", array.item().structure(), identities, seq, false);");
+               out.println("                     internalMarschall(o, o.getClass().getName(), \""
+                           + componentType.getName()
+                           + "\", array.item().structure(), identities, seq, false);");
             }
             out.println("               }                                                              ");
          }
          else if (f.type == ArrayList.class)
          {
             out.println("               java.util.ArrayList arrayList = (java.util.ArrayList)value;                        ");
-            out.println("               bz.davide.dmxmljson.marshalling.Array array = structure.property(\"" +
-                        f.name +
-                        "\").array(arrayList.size());        ");
+            out.println("               bz.davide.dmxmljson.marshalling.Array array = structure.property(\""
+                        + f.name
+                        + "\").array(arrayList.size());        ");
             out.println("               for (Object o: arrayList) {                                    ");
             out.println("                  if (o == null)                                              ");
             out.println("                     array.item().nullValue();                                ");
@@ -170,9 +169,9 @@ public class MarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
             else
             {
                this.addClassToList(componentType);
-               out.println("                     internalMarschall(o, o.getClass().getName(), \"" +
-                           componentType.getName() +
-                           "\", array.item().structure(), identities, seq, false);");
+               out.println("                     internalMarschall(o, o.getClass().getName(), \""
+                           + componentType.getName()
+                           + "\", array.item().structure(), identities, seq, false);");
             }
             out.println("               }                                                              ");
 
@@ -181,14 +180,13 @@ public class MarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
          {
             out.println("               // Hashmap");
             out.println("               java.util.HashMap hashMap = (java.util.HashMap)value;                        ");
-            out.println("               bz.davide.dmxmljson.marshalling.Array array = structure.property(\"" +
-                        f.name +
-                        "\").array(hashMap.size());        ");
+            out.println("               bz.davide.dmxmljson.marshalling.Array array = structure.property(\""
+                        + f.name
+                        + "\").array(hashMap.size());        ");
             out.println("               java.util.ArrayList keySelList = new java.util.ArrayList(hashMap.keySet());");
             out.println("               java.util.Collections.sort(keySelList);");
             out.println("               for (Object key: keySelList) {");
             out.println("                  bz.davide.dmxmljson.marshalling.Array item = array.item().array(2); ");
-
 
             Class keyType = (Class) ((ParameterizedType) f.genericType).getActualTypeArguments()[0];
             if (keyType == Integer.class)
@@ -208,9 +206,9 @@ public class MarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
             {
                this.addClassToList(componentType);
                out.println("                  Object o = hashMap.get(key);");
-               out.println("                  internalMarschall(o, o.getClass().getName(), \"" +
-                           componentType.getName() +
-                           "\", item.item().structure(), identities, seq, false);");
+               out.println("                  internalMarschall(o, o.getClass().getName(), \""
+                           + componentType.getName()
+                           + "\", item.item().structure(), identities, seq, false);");
             }
             out.println("               }");
 
@@ -218,11 +216,11 @@ public class MarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
          else
          {
             this.addClassToList(f.type);
-            out.println("                     internalMarschall(value, value.getClass().getName(),\"" +
-                        f.type.getName() +
-                        "\", structure.property(\"" +
-                        f.name +
-                        "\").structure(), identities, seq, false);");
+            out.println("                     internalMarschall(value, value.getClass().getName(),\""
+                        + f.type.getName()
+                        + "\", structure.property(\""
+                        + f.name
+                        + "\").structure(), identities, seq, false);");
          }
          out.println("            }");
 

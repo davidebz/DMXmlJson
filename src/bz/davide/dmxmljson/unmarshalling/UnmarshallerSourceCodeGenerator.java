@@ -26,7 +26,6 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import bz.davide.dmxmljson.CommonSourceCodeGenerator;
 import bz.davide.dmxmljson.FieldOrMethod;
 import bz.davide.dmxmljson.FieldOrMethod.Access;
@@ -53,12 +52,12 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
       ArrayList<FieldOrMethod> fom = new ArrayList<FieldOrMethod>();
       FieldOrMethod.allFieldOrMethods(clazz, this.type, fom);
 
-      out.println("      this.emptyObjectCheck.put(\"" +
-                  clazz.getName() +
-                  "\", new bz.davide.dmxmljson.unmarshalling.EmptyFieldChecker<" +
-                  clazz.getName() +
-                  ">() {");
-      out.println("         @Override public void check(" + clazz.getName() + "  ret){");
+      out.println("      this.emptyObjectCheck.put(\""
+                  + clazz.getName()
+                  + "\", new bz.davide.dmxmljson.unmarshalling.EmptyFieldChecker<"
+                  + clazz.getCanonicalName()
+                  + ">() {");
+      out.println("         @Override public void check(" + clazz.getCanonicalName() + "  ret){");
       if (this.type == Access.FIELD)
       {
          for (int i = 0; i < fom.size(); i++)
@@ -77,11 +76,11 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
             {
                out.println("            if (ret." + f.name + " != null)");
             }
-            out.println("               throw new RuntimeException(\"The constructor initialized the field " +
-                        clazz.getName() +
-                        "." +
-                        f.name +
-                        "\");");
+            out.println("               throw new RuntimeException(\"The constructor initialized the field "
+                        + clazz.getName()
+                        + "."
+                        + f.name
+                        + "\");");
          }
          Class superClass = clazz.getSuperclass();
          if (superClass != null && !(superClass == Object.class))
@@ -93,9 +92,9 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
       out.println("         }");
       out.println("      });");
 
-      out.println("      this.putInstanceFactory(\"" +
-                  clazz.getName() +
-                  "\", new bz.davide.dmxmljson.unmarshalling.InstanceFactory() {");
+      out.println("      this.putInstanceFactory(\""
+                  + clazz.getName()
+                  + "\", new bz.davide.dmxmljson.unmarshalling.InstanceFactory() {");
       out.println("         @Override public Object newInstance() throws Exception {");
       if (Modifier.isAbstract(clazz.getModifiers()))
       {
@@ -105,12 +104,12 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
       {
          if (this.type == Access.FIELD)
          {
-            out.println("            " +
-                        clazz.getName() +
-                        " ret = new " +
-                        clazz.getName() +
-                        this.defaultConstructorArguments +
-                        ";");
+            out.println("            "
+                        + clazz.getCanonicalName()
+                        + " ret = new "
+                        + clazz.getCanonicalName()
+                        + this.defaultConstructorArguments
+                        + ";");
             out.println("            emptyObjectCheck.get(\"" + clazz.getName() + "\").check(ret);");
             out.println("            return ret;");
          }
@@ -123,15 +122,15 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
       out.println("         }");
       out.println("      });");
       out.println();
-      out.println("      this.putClassUnmarshaller(\"" +
-                  clazz.getName() +
-                  "\", new bz.davide.dmxmljson.unmarshalling.ClassUnmarshaller() {");
+      out.println("      this.putClassUnmarshaller(\""
+                  + clazz.getName()
+                  + "\", new bz.davide.dmxmljson.unmarshalling.ClassUnmarshaller() {");
       out.println("         @Override public void unmarshall(bz.davide.dmxmljson.unmarshalling.Structure structure, Object obj, java.util.HashMap<String, Object> identities) throws Exception {");
       if (clazz.getSuperclass() != null && !clazz.getSuperclass().getName().equals("java.lang.Object"))
       {
-         out.println("            internalUnmarschall(structure, \"" +
-                     clazz.getSuperclass().getName() +
-                     "\", obj, identities);");
+         out.println("            internalUnmarschall(structure, \""
+                     + clazz.getSuperclass().getName()
+                     + "\", obj, identities);");
          this.addClassToList(clazz.getSuperclass());
       }
       out.println("            structure.open();");
@@ -151,53 +150,53 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
          }
          else
          {
-            out.println("                  ((" +
-                        clazz.getSimpleName() +
-                        ")obj)." +
-                        f.writeSetCode("null") +
-                        ";");
+            out.println("                  (("
+                        + clazz.getCanonicalName()
+                        + ")obj)."
+                        + f.writeSetCode("null")
+                        + ";");
          }
          out.println("               else");
          out.println("               {");
          if (f.type == String.class)
          {
-            out.println("                  ((" +
-                        clazz.getSimpleName() +
-                        ")obj)." +
-                        f.writeSetCode("value.string()") +
-                        ";");
+            out.println("                  (("
+                        + clazz.getCanonicalName()
+                        + ")obj)."
+                        + f.writeSetCode("value.string()")
+                        + ";");
          }
          else if (f.type == Integer.class || f.type == Integer.TYPE)
          {
-            out.println("                  ((" +
-                        clazz.getSimpleName() +
-                        ")obj)." +
-                        f.writeSetCode("(int)value.integer()") +
-                        ";");
+            out.println("                  (("
+                        + clazz.getCanonicalName()
+                        + ")obj)."
+                        + f.writeSetCode("(int)value.integer()")
+                        + ";");
          }
          else if (f.type == Long.class || f.type == Long.TYPE)
          {
-            out.println("                  ((" +
-                        clazz.getSimpleName() +
-                        ")obj)." +
-                        f.writeSetCode("value.integer()") +
-                        ";");
+            out.println("                  (("
+                        + clazz.getSimpleName()
+                        + ")obj)."
+                        + f.writeSetCode("value.integer()")
+                        + ";");
          }
          else if (f.type == Double.TYPE)
          {
-            out.println("                  ((" +
-                        clazz.getSimpleName() +
-                        ")obj)." +
-                        f.writeSetCode("value.decimal()") +
-                        ";");
+            out.println("                  (("
+                        + clazz.getSimpleName()
+                        + ")obj)."
+                        + f.writeSetCode("value.decimal()")
+                        + ";");
          }
          else if (f.type == Boolean.TYPE)
          {
-            out.println("                  ((" +
-                        clazz.getSimpleName() +
-                        ")obj)." +
-                        f.writeSetCode("value.booleanValue()") +
-                        ";");
+            out.println("                  (("
+                        + clazz.getSimpleName()
+                        + ")obj)."
+                        + f.writeSetCode("value.booleanValue()")
+                        + ";");
          }
          else if (f.type.isEnum())
          {
@@ -209,11 +208,11 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
 
             out.println("                  bz.davide.dmxmljson.unmarshalling.Array arr = value.array();        ");
             out.println("                  arr.open();        ");
-            out.println("                  " +
-                        componentType.getName() +
-                        "[] arrayList = new " +
-                        componentType.getName() +
-                        "[arr.length()];       ");
+            out.println("                  "
+                        + componentType.getName()
+                        + "[] arrayList = new "
+                        + componentType.getName()
+                        + "[arr.length()];       ");
             out.println("                  for (int i = 0; i < arrayList.length; i++) {                       ");
             out.println("                     value = arr.nextItem();                                       ");
             if (!componentType.isPrimitive())
@@ -242,29 +241,29 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
                out.println("                        bz.davide.dmxmljson.unmarshalling.Structure tmpStructure = value.structure();");
                out.println("                        String refid = tmpStructure.getRefId();    ");
                out.println("                        if (refid != null)                              ");
-               out.println("                           arrayList[i] = (" +
-                           componentType.getName() +
-                           ")(identities.get(refid));                                                ");
+               out.println("                           arrayList[i] = ("
+                           + componentType.getName()
+                           + ")(identities.get(refid));                                                ");
                out.println("                        else {");
 
-               out.println("                           Object o = newInstance(tmpStructure.getRuntimeClassName(\"" +
-                           componentType.getSimpleName() +
-                           "\"));              ");
+               out.println("                           Object o = newInstance(tmpStructure.getRuntimeClassName(\""
+                           + componentType.getSimpleName()
+                           + "\"));              ");
                out.println("                           internalUnmarschall(tmpStructure, o.getClass().getName(), o, identities); ");
-               out.println("                           arrayList[i] = (" +
-                           componentType.getName() +
-                           ")(o);                                                ");
+               out.println("                           arrayList[i] = ("
+                           + componentType.getName()
+                           + ")(o);                                                ");
                out.println("                        }");
                out.println("                     }                                                                   ");
             }
             out.println("                  }                                                                   ");
             out.println("                  arr.close();        ");
 
-            out.println("                  ((" +
-                        clazz.getSimpleName() +
-                        ")obj)." +
-                        f.writeSetCode("arrayList") +
-                        ";");
+            out.println("                  (("
+                        + clazz.getCanonicalName()
+                        + ")obj)."
+                        + f.writeSetCode("arrayList")
+                        + ";");
 
          }
          else if (f.type == ArrayList.class)
@@ -302,9 +301,9 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
                out.println("                           arrayList.add(identities.get(refid));                                                ");
                out.println("                        else {");
 
-               out.println("                           Object o = newInstance(tmpStructure.getRuntimeClassName(\"" +
-                           componentType.getSimpleName() +
-                           "\"));              ");
+               out.println("                           Object o = newInstance(tmpStructure.getRuntimeClassName(\""
+                           + componentType.getSimpleName()
+                           + "\"));              ");
                out.println("                           internalUnmarschall(tmpStructure, o.getClass().getName(), o, identities); ");
                out.println("                           arrayList.add(o);                                                ");
                out.println("                        }");
@@ -312,11 +311,11 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
             }
             out.println("                  }                                                                   ");
             out.println("                  arr.close();        ");
-            out.println("                  ((" +
-                        clazz.getSimpleName() +
-                        ")obj)." +
-                        f.writeSetCode("arrayList") +
-                        ";");
+            out.println("                  (("
+                        + clazz.getCanonicalName()
+                        + ")obj)."
+                        + f.writeSetCode("arrayList")
+                        + ";");
 
          }
          else if (f.type == HashMap.class)
@@ -345,40 +344,40 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
             {
                this.addClassToList(componentType);
                out.println("                     value = item.nextItem();");
-               out.println("                     Object o = newInstance(value.structure().getRuntimeClassName(\"" +
-                           componentType.getSimpleName() +
-                           "\"));              ");
+               out.println("                     Object o = newInstance(value.structure().getRuntimeClassName(\""
+                           + componentType.getSimpleName()
+                           + "\"));              ");
                out.println("                     internalUnmarschall(value.structure(), o.getClass().getName(), o, identities); ");
                out.println("                     hashMap.put(key,o);");
             }
             out.println("                  }                       ");
 
-            out.println("                  ((" +
-                        clazz.getSimpleName() +
-                        ")obj)." +
-                        f.writeSetCode("hashMap") +
-                        ";");
+            out.println("                  (("
+                        + clazz.getSimpleName()
+                        + ")obj)."
+                        + f.writeSetCode("hashMap")
+                        + ";");
          }
          else
          {
             this.addClassToList(f.type);
             out.println("                  String refid = value.structure().getRefId();    ");
             out.println("                  if (refid != null)                              ");
-            out.println("                     ((" +
-                        clazz.getSimpleName() +
-                        ")obj)." +
-                        f.writeSetCode("(" + f.type.getName() + ")identities.get(refid)") +
-                        ";");
+            out.println("                     (("
+                        + clazz.getCanonicalName()
+                        + ")obj)."
+                        + f.writeSetCode("(" + f.type.getName() + ")identities.get(refid)")
+                        + ";");
             out.println("                  else {");
-            out.println("                     Object o = newInstance(value.structure().getRuntimeClassName(\"" +
-                        f.type.getSimpleName() +
-                        "\"));              ");
+            out.println("                     Object o = newInstance(value.structure().getRuntimeClassName(\""
+                        + f.type.getSimpleName()
+                        + "\"));              ");
             out.println("                     internalUnmarschall(value.structure(), o.getClass().getName(), o, identities); ");
-            out.println("                     ((" +
-                        clazz.getSimpleName() +
-                        ")obj)." +
-                        f.writeSetCode("(" + f.type.getName() + ")o") +
-                        ";");
+            out.println("                     (("
+                        + clazz.getCanonicalName()
+                        + ")obj)."
+                        + f.writeSetCode("(" + f.type.getName() + ")o")
+                        + ";");
             out.println("                  }");
          }
          out.println("               }");
