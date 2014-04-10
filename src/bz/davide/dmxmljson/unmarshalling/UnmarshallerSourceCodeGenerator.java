@@ -85,7 +85,7 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
          Class superClass = clazz.getSuperclass();
          if (superClass != null && !(superClass == Object.class))
          {
-            out.println("            emptyObjectCheck.get(\"" + superClass.getName() + "\").check(ret);");
+            //out.println("            emptyObjectCheck.get(\"" + superClass.getName() + "\").check(ret);");
          }
 
       }
@@ -110,7 +110,7 @@ public class UnmarshallerSourceCodeGenerator extends CommonSourceCodeGenerator
                         + clazz.getCanonicalName()
                         + this.defaultConstructorArguments
                         + ";");
-            out.println("            emptyObjectCheck.get(\"" + clazz.getName() + "\").check(ret);");
+            //out.println("            emptyObjectCheck.get(\"" + clazz.getName() + "\").check(ret);");
             out.println("            return ret;");
          }
          else
